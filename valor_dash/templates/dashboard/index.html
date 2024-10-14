@@ -1,0 +1,349 @@
+{% extends "layout/base.html" %} 
+{% load static %}
+{% block contents %}
+
+    
+
+
+
+
+<style>
+  .switch-container {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+  }
+  .d{
+    background-color: #4D4D4F;
+  } 
+  .T{
+    background-color: #31906E;
+  }
+
+  .switch-input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+  }
+
+  .switch-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 34px;
+  }
+
+  .switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+  }
+
+  .switch-input:checked + .switch-slider {
+      background-color: #28a745;
+  }
+
+  .switch-input:checked + .switch-slider:before {
+      transform: translateX(26px);
+  }
+
+ 
+  .balance-cards {
+    display: flex; /* Use flexbox for horizontal layout */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap; /* Prevent wrapping of cards */
+}
+
+.card {
+    min-width: 200px; /* Set a minimum width for each card */
+    margin-right: 15px; /* Space between cards */
+}
+
+@media (min-width: 768px) {
+    .balance-cards {
+        overflow-x: hidden; /* Disable horizontal scroll on larger screens */
+        flex-wrap: wrap; /* Allow wrapping on larger screens */
+    }
+
+    .card {
+        flex: 1; /* Cards grow and shrink equally on larger screens */
+        margin-right: 10px; /* Margin for cards */
+    }
+}
+  
+
+
+.table th, .table td {
+  padding: 0.3rem; /* Further reduce padding */
+}
+
+.table {
+  margin-bottom: 0; /* Remove bottom margin */
+}
+</style>
+
+
+
+
+      
+      <!-- partial -->
+      <div class="main-panel bg-white">
+        <div class="content-wrapper">
+          {% if not is_verified %}
+    <div class="alert alert-danger" role="alert">
+        Please verify your email in order to carry out transactions. 
+        <a href="{% url 'accounts' %}" class="alert-link" >Click to verify</a>
+    </div>
+        {% endif %}
+          <div class="page-header">
+            <h3 class="page-title">
+              Dashboard
+            </h3>
+          </div>
+          <h4 class="name text-dark mb-3">
+            Welcome,{{ request.user.username|capfirst  }}
+            </h4>
+          <label class="switch-container">
+            <input type="checkbox" class="switch-input" id="toggleSwitch">
+            <span class="switch-slider"></span>
+        </label>
+        <span id="switch-label" class="ms-2"></span>
+          
+        <div class="container-fluid mt-2 mb-2 d-flex justify-content-end">
+          <a href="{% url 'Transactions' %}" class="btn btn-outline-dark me-5  text-decoration-none">Deposit</a>
+        </div>
+        
+        
+
+          <div class="row grid-margin">
+            <div class="col-12">
+              <div class="card bg-light col-12">
+                <div class="card-body">
+                  <div class="balance-cards">
+                      <div class="card d  py-3 shadow">
+                          <div class="card-body">
+                              <p class="text-light">
+                                  <i class="fa fa-credit-card"></i>
+                                  Main balance
+                              </p>
+                              <h3 class="switch text-light mt-2">${{ formatted_Main_balance }}</h3>
+                          </div>
+                      </div>
+                      <div class="card T  py-3 shadow">
+                          <div class="card-body">
+                              <p class="text-light">
+                                <i class="fa fa-credit-card"></i>
+                                  Total savings
+                              </p>
+                              <h3 class="switch text-light mt-2">${{ formatted_total_savings }}</h3>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            
+              
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-12  grid-margin stretch-card">
+              <div class="card bg-light">
+                <div class="card-body">
+                  <h4 class="card-title">
+                    <i class="fas fa-chart-line"></i>
+                    Transactions this month
+                  </h4>
+                  <canvas id="orders-chart"></canvas>
+                  <div id="orders-chart-legend" class="orders-chart-legend"></div>                  
+                </div>
+              </div>
+            </div>       
+          </div>
+          <div class="row">
+            <div class="col-md-4 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body  d-flex flex-column">
+                  <h4 class="card-title">
+                    <i class="fas fa-tasks"></i> <!-- Changed icon to represent a to-do list -->
+                    Account Setup Checklist
+                  </h4>
+                  <div class="flex-grow-1 d-flex flex-column justify-content-between">
+                    <!-- To-Do List Implementation -->
+                    <ul class="list-group list-group-flush mt-3">
+                      <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="verifyEmailCheckbox" {% if is_verified %}checked{% endif %} disabled>
+                          <label class="form-check-label {% if is_verified %}text-success{% endif %}" for="verifyEmailCheckbox">Verify Email
+                              {% if is_verified %}
+                                  <span class="text-success ms-2">&#10003;</span> <!-- Checkmark icon -->
+                              {% endif %}
+                          </label>
+                      </div>                      
+                        <span class="badge bg-light border-dark rounded-pill">Step 1</span>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                        <input class="form-check-input" type="checkbox" id="verifyEmailCheckbox" {% if all_fields_filled %}checked{% endif %} disabled>
+                          <label class="form-check-label {% if all_fields_filled %}text-success{% endif %}" for="verifyEmailCheckbox">
+                              Complete account Setup
+                              {% if all_fields_filled %}
+                                  <span class="text-success ms-2">&#10003;</span> <!-- Checkmark icon -->
+                              {% endif %}
+                          </label>
+                      </div>
+                      
+                        <span class="badge bg-light border-dark rounded-pill">Step 2</span>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between align-items-center">
+                      <div>
+                          <input class="form-check-input" type="checkbox" id="verifyEmailCheckbox" {% if has_deposit %}checked{% endif %} disabled>
+                          <label class="form-check-label {% if has_deposit %}text-success{% endif %}" for="verifyEmailCheckbox">
+                            Fund Your Account
+                              {% if has_deposit %}
+                                  <span class="text-success ms-2">&#10003;</span> <!-- Checkmark icon -->
+                              {% endif %}
+                      </div>
+                      
+                        <span class="badge bg-light border-dark rounded-pill">Step 3</span>
+                      </li>
+                      <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <div>
+                          <input class="form-check-input" type="checkbox" id="verifyEmailCheckbox" {% if is_saved %}checked{% endif %} disabled>
+                          <label class="form-check-label {% if is_saved %}text-success{% endif %}" for="verifyEmailCheckbox">
+                            Start saving
+                              {% if is_saved %}
+                                  <span class="text-success ms-2">&#10003;</span> <!-- Checkmark icon -->
+                              {% endif %}
+                      </div>
+                        <span class="badge bg-light border-dark rounded-pill">Step 4</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-md-8 grid-margin stretch-card">
+              <div class="card bg-transparent">
+                  <div class="card-body">
+                      <h4 class="card-title d-flex align-items-center">
+                          <i class="fas fa-exchange-alt me-2" style="font-size: 1.5rem; color: #007bff;"></i>
+                          Recent Transactions
+                      </h4>
+                      <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                      <!-- Transactions Table -->
+<table class="table">
+  <thead>
+      <tr>
+          <th>Description</th>
+          <th>Category</th>
+          <th>Amount</th>
+          <th>Status</th>
+          <th>Date</th>
+      </tr>
+  </thead>
+  <tbody>
+      {% if recent_transactions %}
+          {% for transaction in recent_transactions %}
+              <tr style="height: 40px;"> <!-- Set a fixed height for rows -->
+                  <td>{{ transaction.description }}</td>
+                  <td>{{ transaction.category }}</td>
+                  <td>${{ transaction.amount }}</td>
+                  <td>
+                      <span class="badge 
+                          {% if transaction.status == 'Completed' %} bg-success 
+                          {% elif transaction.status == 'Pending' %} bg-warning 
+                          {% else %} bg-danger {% endif %}">
+                          {{ transaction.get_status_display }}
+                      </span>
+                  </td>
+                  <td>{{ transaction.date|date:"M d, Y h:i A" }}</td>
+              </tr>
+          {% endfor %}
+      {% else %}
+          <tr>
+              <td colspan="6" class="text-center text-muted">No transactions found.</td>
+          </tr>
+      {% endif %}
+  </tbody>
+</table>
+
+                      </div>
+                  </div>
+              </div>
+          </div>
+          
+
+          </div>
+          <div class="row">
+           
+
+
+
+
+            <div class="col-md-4 grid-margin stretch-card">
+             
+            </div>
+          </div>
+        </div>
+       
+     
+      
+    
+        <script>
+            // Get the toggle switch and elements to be hidden
+            const toggleSwitch = document.getElementById('toggleSwitch');
+            const switchElements = document.querySelectorAll('.switch');
+            const switchLabel = document.getElementById('switch-label');
+    
+            // Function to toggle the visibility of elements
+            function toggleVisibility() {
+                const isHidden = localStorage.getItem('contentHidden') === 'true';
+    
+                if (isHidden) {
+                    switchElements.forEach(element => {
+                        element.textContent = '**********';
+                        element.classList.add('masked');
+                    });
+                    toggleSwitch.checked = true;
+                } else {
+                    switchElements.forEach(element => {
+                        element.textContent = element.getAttribute('data-original-text');
+                        element.classList.remove('masked');
+                    });
+                    toggleSwitch.checked = false;
+                }
+            }
+    
+            // Function to update local storage and toggle elements
+            function toggleContent() {
+                const isHidden = localStorage.getItem('contentHidden') === 'true';
+                localStorage.setItem('contentHidden', !isHidden);
+                toggleVisibility();
+            }
+    
+            // Store the original text in a custom attribute and initialize visibility
+            switchElements.forEach(element => {
+                element.setAttribute('data-original-text', element.textContent);
+            });
+            toggleVisibility();
+    
+            // Add event listener to toggle switch
+            toggleSwitch.addEventListener('change', toggleContent);
+        </script>
+
+  
+
+{% endblock contents %}

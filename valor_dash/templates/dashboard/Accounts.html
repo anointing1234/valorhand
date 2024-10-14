@@ -1,0 +1,594 @@
+{% extends "layout/base.html" %} 
+{% load static %}
+{% block contents %}
+
+
+<style>
+  .sidebar_right {
+    position: fixed; /* Fixed position */
+    top: 0;
+    right: -300px; /* Initially hide offscreen */
+    width: 300px; /* Width of the sidebar */
+    height: 100%; /* Full height */
+    background-color: white; /* Background color */
+    box-shadow: -2px 0 5px rgba(0, 0, 0, 0.5); /* Shadow effect */
+    border-radius: 10px; /* Rounded corners */
+    transition: right 0.3s ease; /* Transition effect */
+    z-index: 1050; /* Ensure it is above other content */
+    overflow-y: auto; /* Enable vertical scrolling if content exceeds height */
+}
+.contact-info p {
+  margin: 5px 0; /* Space between contact info lines */
+}
+
+.contact-info i {
+  margin-right: 10px; /* Space between icon and text */
+  color: #007bff; /* Change icon color to match your theme */
+}
+
+.sidebar_right.active {
+    right: 0; /* Show sidebar when active */
+}
+
+.close-btn {
+    cursor: pointer; /* Pointer cursor for close button */
+    font-size: 2rem; /* Larger close button */
+    color: #000; /* Close button color */
+    position: absolute; /* Positioning */
+    top: 20px; /* Distance from the top */
+    right: 20px; /* Distance from the right */
+    z-index: 1060; /* Higher z-index to ensure it's on top */
+}
+
+/* Additional styles for forms inside the sidebar */
+.forms-sample {
+    padding: 20px; /* Add some padding for the form */
+}
+
+.form-group {
+    margin-bottom: 15px; /* Spacing between form groups */
+}
+
+.btn {
+    margin-top: 10px; /* Space above buttons */
+}
+
+/* Add media query for responsiveness */
+@media (max-width: 768px) {
+    .sidebar_right {
+        width: 100%; /* Adjust width for smaller screens */
+        right: -100%; /* Hide completely offscreen */
+    }
+
+    .sidebar_right.active {
+        right: 0; /* Show sidebar when active */
+    }
+}
+
+.close-btn {
+    cursor: pointer; /* Pointer cursor for close button */
+    font-size: 2rem; /* Larger close button */
+    color: #000; /* Close button color */
+    position: absolute; /* Positioning */
+    top: 20px; /* Distance from the top */
+    right: 20px; /* Distance from the right */
+    z-index: 1060; /* Higher z-index to ensure it's on top */
+}
+
+/* Additional styles for forms inside the sidebar */
+.forms-sample {
+    padding: 20px; /* Add some padding for the form */
+}
+
+.form-group {
+    margin-bottom: 15px; /* Spacing between form groups */
+}
+
+.btn {
+    margin-top: 10px; /* Space above buttons */
+}
+
+/* Add media query for responsiveness if needed */
+@media (max-width: 768px) {
+    .sidebar_right {
+        width: 100%; /* Adjust width for smaller screens */
+    }
+}
+
+  
+    .custom-card {
+        height: 400px;
+    }
+    .profile-pic {
+        height: 90px;
+        width: 90px;
+    }
+    .profile-section {
+        opacity: 1;
+        transition: opacity 0.1s ease-in-out;
+    }
+    .profile-section.d-none {
+        opacity: 0;
+        pointer-events: none;
+    }
+    .but {
+        margin-left: 2cm;
+    }
+    .profile-section {
+        margin-top: 2cm;
+    }
+    .profile-pic {
+        width: 100px; /* Example size, adjust as needed */
+        height: 100px; /* Example size, adjust as needed */
+        object-fit: cover;
+        object-position: center;
+        border-radius: 50%; /* Ensures the image is a circle */
+    }
+    .position-relative{
+        margin-left: 20cm; 
+    }
+    .switch-container {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 34px;
+  }
+
+  .switch-input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+  }
+
+  .switch-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 34px;
+  }
+
+  .switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+  }
+
+  .switch-input:checked + .switch-slider {
+      background-color: #28a745;
+  }
+
+  .switch-input:checked + .switch-slider:before {
+      transform: translateX(26px);
+  }
+</style>
+    
+
+
+
+
+
+
+      
+      <!-- partial -->
+      <div class="main-panel  ">
+        <div class="content-wrapper">
+            {% if not is_verified %}
+            <div class="alert alert-danger" role="alert">
+                Please verify your email in other to carry out transactions <a href="{% url 'accounts' %}" class="alert-link">CLick to verify</a>
+            </div>
+                {% endif %}
+          <div class="page-header">
+            <h3 class="page-title">
+              My Account
+            </h3>
+          </div>
+          
+          <div class="row">
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card bg-transparent border-none">
+                  <div class="card-body">
+                    <!-- Profile Information Section -->
+                    <div class="container-fluid mt-5 d-flex justify-content-center">
+                      <div class="container text-center">
+                        <!-- Profile Picture -->
+                        <img src="{% static 'images/profile_odj.jpg' %}" class="rounded-circle border border-2 border-white profile-pic" alt="Profile Image" width="150" height="150"/>
+                        <!-- User Details -->
+                        <h4 class="mt-3">{{ request.user.username }}</h4>
+                        <p class="text-muted">{{ request.user.email }}</p>
+                        
+                    </form>                    
+                      </div>
+                    </div>
+              
+                    <!-- Balance Section -->
+                    <div class="container-fluid mt-5">
+                        <div class="row text-center">
+                          <!-- Balance 2 -->
+                          <div class="col-md-6 col-sm-12 mb-4">
+                            <div class="balance-card bg-light p-4 rounded d-flex justify-content-center flex-column">
+                              <h5>Main balance</h5>
+                              <h5 class="switch">${{ formatted_Main_balance }}</h5>
+                            </div>
+                          </div>
+                          <!-- Balance 3 -->
+                          <div class="col-md-6 col-sm-12 mb-4">
+                            <div class="balance-card bg-light p-4 rounded d-flex justify-content-center flex-column">
+                              <h5>Total savings</h5>
+                              <h5 class="switch">${{ formatted_total_savings }}</h5>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 grid-margin stretch-card">
+                <div class="card bg-transparent border-0">
+                    <div class="card-body p-4">
+                        <!-- Button List Container -->
+                        <div class="d-grid gap-3 mt-5">
+                            <!-- Today's Rates Button -->
+                    
+                            <!-- My Account Settings Button -->
+                            <a href="#" class="btn btn-outline-primary btn-block" onclick="openSidebar('accountSettings')" role="button">My Account Settings</a>
+            
+                            <!-- Verify your email Button -->
+                            
+                            {% if not is_verified %}
+                            <a href="#" class="btn btn-outline-primary btn-block" onclick="openSidebar('verifyEmail')" role="button">Verify your email</a>
+                             {% else %}
+                            <a href="#" class="btn btn-success btn-block">Email verified</a>
+                            {% endif %}
+                           
+                            <!-- Deposit Funds Button -->
+                            <a href="{% url 'Transactions' %}" class="btn btn-outline-primary btn-block" role="button">Deposit Funds</a>
+            
+                            <!-- Withdraw Funds Button -->
+                            <a href="{% url 'Transactions' %}" class="btn btn-outline-primary btn-block" role="button">Withdraw Funds</a>
+            
+                            <!-- Contact Us Button -->
+                            <a href="#" class="btn btn-outline-primary btn-block" onclick="openSidebar('contactUs')" role="button">Contact Us</a>
+            
+                            <!-- Log Out Button -->
+                            <a href="{% url 'logout' %}" class="btn btn-outline-danger btn-block" role="button">Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                <!-- Sidebars -->
+
+
+            <div id="sidebar_accountSettings" class="sidebar_right py-5" aria-hidden="true">
+                  <span class="close-btn" onclick="closeSidebar('accountSettings')">&times;</span>
+                <div class="container ">  <h4 class="mt-5">My Account Settings</h4>
+                  <p>Update your account information here...</p>
+                  </div>
+                  <div class="col-12 grid-margin stretch-card"> <!-- Changed col-md-12 to col-12 for full width -->
+                      <div class="card">
+                          <div class="card-body">
+                            <form id="accountSettingsForm" class="forms-sample">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label for="exampleInputUsername1">Username</label>
+                                    <input type="text" name="username" class="form-control" id="exampleInputUsername1" placeholder="Username" value="{{ request.user.username }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputCountry">Country</label>
+                                    <input type="text" name="country" class="form-control" id="exampleInputCountry" placeholder="Country" value="{{ request.user.country }}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="exampleInputPhone">Telephone</label>
+                                    <input type="text" name="phone" class="form-control" id="exampleInputPhone" placeholder="Telephone" value="{{ request.user.phone }}" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary mr-2">Save</button>
+                                <button type="button" class="btn btn-light" onclick="closeSidebar('accountSettings')">Cancel</button>
+                            </form>
+                            
+                          </div>
+                      </div>
+                  </div>
+
+              </div>
+     
+              <!-- HTML Structure for Email Verification -->
+               
+<div id="sidebar_verifyEmail" class="sidebar_right py-5" aria-hidden="true">
+    <span class="close-btn" onclick="closeSidebar('verifyEmail')">&times;</span>
+    <div class="container">
+        <h4 class="mt-5">Email Verification</h4>
+        <p>Request a verification code to your email.</p>
+    </div>
+    <div class="col-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <form id="sendVerificationCodeForm" onsubmit="return sendVerificationCode(event);">
+                    <div class="form-group">
+                        <label for="verificationEmail">Email address</label>
+                        <input type="email" class="form-control" id="verificationEmail" placeholder="Email" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mr-2">Send Code</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verification Code Section -->
+    <div class="col-12 grid-margin stretch-card mt-3" id="verifyCodeSection" style="display:none;">
+        <div class="card">
+            <div class="card-body">
+                <form id="verifyCodeForm" onsubmit="return verifyCode(event);">
+                    <div class="form-group">
+                        <label for="verificationCode">Verification Code</label>
+                        <input type="text" class="form-control" id="verificationCode" placeholder="Enter verification code" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary mr-2">Verify</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</div>
+<div id="sidebar_contactUs" class="sidebar_right py-5" aria-hidden="true">
+  <span class="close-btn" onclick="closeSidebar('contactUs')">&times;</span>
+  <div class="container mt-2">
+      <h3 class="mt-5 mb-2">Contact Us</h3>
+      <p>If you have any questions, feel free to reach out!</p>
+
+      <div class="contact-info">
+          <p>
+              <i class="fas fa-map-marker-alt"></i> 
+              <strong>Address:</strong> 123 6th St. Melbourne, FL 32904
+          </p>
+          <p>
+              <i class="fas fa-phone-alt"></i> 
+              <strong>Phone:</strong> (888) 123-4567
+          </p>
+          <p>
+              <i class="fas fa-envelope"></i> 
+              <strong>Email:</strong> 
+              <a href="mailto:info@example.com">info@example.com</a>
+          </p>
+      </div>
+  </div>
+</div>
+
+
+              
+          <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+          <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+          <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+          <script>
+            document.getElementById('accountSettingsForm').addEventListener('submit', async function(event) {
+                event.preventDefault();  // Prevent the default form submission
+        
+                const formData = new FormData(this);
+        
+                try {
+                    const response = await fetch("{% url 'account_settings' %}", {  // Use the URL defined in urls.py
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'  // Indicate that this is an AJAX request
+                        }
+                    });
+        
+                    if (!response.ok) {
+                        const data = await response.json();
+                        const errors = data.errors; // Get errors if any
+                        let errorMessage = '';
+        
+                        // Collect all error messages
+                        for (const key in errors) {
+                            errorMessage += `${errors[key]}<br>`;
+                        }
+        
+                        // Display error message using SweetAlert
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            html: errorMessage,
+                            confirmButtonText: 'Okay'
+                        });
+                    } else {
+                        // Handle success
+                        const successMessage = await response.json();
+                        
+                        // Show success message using SweetAlert
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Account updated successfully!',
+                            text: successMessage.message, // Adjust according to your backend response
+                            confirmButtonText: 'Okay'
+                        }).then(() => {
+                            // Optionally, you can refresh the page or redirect the user
+                            location.reload(); // Reloads the page to reflect changes
+                        });
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    // Handle unexpected errors
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An unexpected error occurred. Please try again later.',
+                        confirmButtonText: 'Okay'
+                    });
+                }
+            });
+        </script>
+        
+
+
+
+          <script>
+            function sendVerificationCode(event) {
+                event.preventDefault(); // Prevent the form from submitting normally
+            
+                const email = document.getElementById('verificationEmail').value;
+            
+                // AJAX request to send verification code
+                fetch('{% url "send_verification_code" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token
+                    },
+                    body: JSON.stringify({ email: email }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: data.message,
+                        });
+                        // Show the verification code input form
+                        document.getElementById('verifyCodeSection').style.display = 'block';
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: data.message,
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Something went wrong. Please try again.',
+                    });
+                });
+            }
+            
+            function verifyCode(event) {
+                event.preventDefault(); // Prevent the form from submitting normally
+            
+                const email = document.getElementById('verificationEmail').value;
+                const code = document.getElementById('verificationCode').value;
+            
+                // AJAX request to verify the code
+                fetch('{% url "verify_code" %}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}',  // Include CSRF token
+                    },
+                    body: JSON.stringify({ email: email, code: code }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: data.message,
+                        }).then(() => {
+                            // Optionally, you can refresh the page or redirect the user
+                            location.reload(); // Reloads the page to reflect changes
+                        }); 
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error!',
+                            text: data.message,
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: 'Something went wrong. Please try again.',
+                    });
+                });
+            }
+            </script>
+            
+
+
+
+
+
+      
+          <script>
+              // Get the toggle switch and elements to be hidden
+              const toggleSwitch = document.getElementById('toggleSwitch');
+              const switchElements = document.querySelectorAll('.switch');
+              const switchLabel = document.getElementById('switch-label');
+      
+              // Function to toggle the visibility of elements
+              function toggleVisibility() {
+                  const isHidden = localStorage.getItem('contentHidden') === 'true';
+      
+                  if (isHidden) {
+                      switchElements.forEach(element => {
+                          element.textContent = '**********';
+                      });
+                      toggleSwitch.checked = true;
+                  } else {
+                      switchElements.forEach(element => {
+                          element.textContent = element.getAttribute('data-original-text');
+                      });
+                      toggleSwitch.checked = false;
+                  }
+              }
+      
+              // Function to update local storage and toggle elements
+              function toggleContent() {
+                  const isHidden = localStorage.getItem('contentHidden') === 'true';
+                  localStorage.setItem('contentHidden', !isHidden);
+                  toggleVisibility();
+              }
+      
+              // Store the original text in a custom attribute and initialize visibility
+              switchElements.forEach(element => {
+                  element.setAttribute('data-original-text', element.textContent);
+              });
+              toggleVisibility();
+      
+              // Add event listener to toggle switch
+              toggleSwitch.addEventListener('change', toggleContent);
+
+
+
+               // Function to update local storage and toggle elements
+            function toggleContent() {
+              const isHidden = localStorage.getItem('contentHidden') === 'true';
+              localStorage.setItem('contentHidden', !isHidden);
+              toggleVisibility();
+          }
+  
+          // Store the original text in a custom attribute and initialize visibility
+          switchElements.forEach(element => {
+              element.setAttribute('data-original-text', element.textContent);
+          });
+          toggleVisibility();
+  
+          // Add event listener to toggle switch
+          toggleSwitch.addEventListener('change', toggleContent);
+
+          </script>
+  
+    
+
+
+  
+
+{% endblock contents %}

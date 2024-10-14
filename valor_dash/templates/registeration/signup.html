@@ -1,0 +1,219 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Valorhand | registeration</title>
+    <!-- plugins:css -->
+  <link rel="stylesheet" href="{% static 'vendors/iconfonts/font-awesome/css/all.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.base.css' %}">
+  <link rel="stylesheet" href="{% static 'vendors/css/vendor.bundle.addons.css' %}">
+  <!-- endinject -->
+  <!-- plugin css for this page -->
+  <!-- End plugin css for this page -->
+  <!-- inject:css -->
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <!-- endinject -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <style>
+    .form-control {
+      border: none; /* Remove borders */
+      box-shadow: none; /* Remove shadow effect */
+  }
+  
+  .form-control:focus {
+      border-color: black; /* Ensure no border color when focused */
+      box-shadow: none; /* Remove shadow on focus */
+  }
+  
+    .bg-image {
+        background-image: url("{% static 'images/valor_bg.jpg' %}");
+        background-repeat: no-repeat; /* Prevents the image from repeating */
+        background-size: cover; /* Scales the image to cover the entire screen */
+        background-position: center; /* Centers the image */
+    }
+    .card{
+      border:none;
+      border-radius: 20px;
+    } 
+    .logo {
+      font-family: 'Arial', sans-serif;  /* Change to a more stylish font if desired */
+      font-size: 48px;                   /* Larger font size for a logo */
+      font-weight: 1000;                  /* Extra bold */
+      color:black;                    /* Dark color for the logo */
+      text-transform: uppercase;         /* Uppercase letters */
+      letter-spacing: 5px;               /* Spacing between letters */
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Soft shadow for depth */
+      background: linear-gradient(90deg, #f39c12, #e74c3c); /* Gradient background */
+      -webkit-background-clip: text;     /* Show background through text */
+      -webkit-text-fill-color: transparent; /* Set text color to transparent */
+      margin: 20px 0;
+
+      .card-title{
+        margin-right:20px;
+      }
+  }
+</style>
+  <body >
+    <div class="container-fluid">
+      <h5 class="card-title  text-dark text-start py-3 me-3 mt-2 fw-bold ">    VALORHAND | <span>Investment Banking</span></h5>
+    </div>
+    <div class="container-fluid d-flex justify-content-center pt-3 py-5" >
+    <div class="col-md-4 grid-margin stretch-card">
+        <div class="card  bg-transparent ">
+      <div class="card-body">
+          <h3 class="text-center text-dark fw-bold mt-1 mb-2">Create a Secure Account
+          </h3>
+          <p class="text-center mt-1 mb-2 text-dark">Welcome to the future of Investments  &  banking </p>
+          
+            <form id="registrationForm" class="forms-sample" method="POST" action="{% url "signup"  %}">
+                {% csrf_token %}
+              <div class="form-group">
+                <label for="exampleInputUsername1" class="text-dark">Fullname</label>
+                {{ form.fullname }}
+              </div>
+              <div class="form-group">
+                <label for="exampleInputUsername1" class="text-dark">Username</label>
+                {{ form.username }}
+              </div>
+              <div class="form-group">
+                <label for="exampleInputEmail1" class="text-dark">Email address</label>
+                {{ form.email }}
+              </div>
+              <div class="form-group">
+                <label for="exampleInputPassword1" class="text-dark">Password</label>
+               {{ form.password1 }}
+              </div>
+              <div class="form-group">
+                <label for="exampleInputConfirmPassword1" class="text-dark">Confirm Password</label>
+                {{ form.password2 }}
+              </div>
+              <div class="form-group d-flex justify-content-center">
+                <div class="form-check form-check-flat form-check-primary">
+                  <label class="form-check-label text-dark">
+                    <input type="checkbox" class="form-check-input text-dark">Remember me
+                  </label>
+                </div>
+              </div>
+                <div class="container d-flex justify-content-center">
+                    <p class="create text-dark">Already have an account? <a class="text-dark" href="{% url 'signin' %}">Login</a></p>  
+                </div>
+              <button type="button" id="submitBtn" class="btn btn-dark col-12 ">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <footer class="bg-dark text-white py-4">
+      <div class="container">
+          
+          <hr class="my-4 bg-light">
+          <div class="text-center">
+              <p>
+                  Valorhand is a business of Valorhand Bank USA, a wholly-owned subsidiary of The Valorhand Group, Inc. Loans and deposit products are provided by Valorhand Bank USA, Salt Lake City branch. Member FDIC.
+              </p>
+              <p>
+                  Securities-based loans may not be appropriate for all parties (e.g., borrowers, pledgors, and guarantors) and carry a number of risks, including but not limited to the risk of a market downturn, tax implications if pledged securities are liquidated, and the potential increase in interest rates. You should consider these risks and whether a securities-based loan is appropriate before proceeding.
+              </p>
+              <p>
+                  Credit qualification and collateral are subject to approval. Additional terms and conditions apply.
+              </p>
+              <p>
+                  Valorhand does not provide legal, tax, or accounting advice. This content is for marketing purposes only and is not a substitute for individualized professional advice. Individuals should consult their own tax advisor for matters specific to their own taxes and nothing communicated to you herein should be considered tax advice.
+              </p>
+              <p>
+                  ©<span id="year"></span> <!-- Add the element to display the year here --> Valorhand. All Rights Reserved. Valorhand is a registered trademark of Valorhand & Co. LLC.<br>
+                  Norton Secured | Equal-opportunity Lender
+              </p>
+          </div>
+      </div>
+  </footer>
+  <script>
+    document.getElementById('year').innerText = new Date().getFullYear();
+  </script>
+<!-- plugins:js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+<script src="{% static 'vendors/js/vendor.bundle.addons.js' %}"></script>
+<!-- endinject -->
+<!-- Plugin js for this page-->
+<!-- End plugin js for this page-->
+<!-- inject:js -->
+<script src="{% static 'js/off-canvas.js' %}"></script>
+<script src="{% static 'js/hoverable-collapse.js' %}"></script>
+<script src="{% static 'js/misc.js' %}"></script>
+<script src="{% static 'js/settings.js' %}"></script>
+<script src="{% static 'js/todolist.js' %}"></script>
+<!-- endinject -->
+<!-- Custom js for this page-->
+<script src="{% static 'js/dashboard.js' %}"></script>
+<!-- End custom js for this page-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    
+
+    <script>
+      $(document).ready(function () {
+          $('#submitBtn').click(function (e) {
+              e.preventDefault();
+          
+              // Serialize the form data
+              var formData = $('#registrationForm').serialize();
+          
+              // Perform AJAX request
+              $.ajax({
+                  type: 'POST',
+                  url: $('#registrationForm').attr('action'),
+                  data: formData,
+                  success: function (response) {
+                      if (response.success) {
+                          // Display success message using SweetAlert
+                          Swal.fire({
+                              icon: 'success',
+                              title: 'Registration Successful',
+                              text: 'You have been registered successfully!',
+                              showConfirmButton: true,
+                          }).then(() => {
+                              // Redirect to the specified page
+                              window.location.href = response.redirect_url;
+                          });
+                      } else {
+                          // Display error messages using SweetAlert
+                          let errorMessages = '';
+                          if (response.errors) {
+                              const errors = JSON.parse(response.errors);
+                              for (const field in errors) {
+                                  errorMessages += `${errors[field][0].message}<br>`;
+                              }
+                          } else {
+                              errorMessages = response.message || 'Please correct the errors and try again.';
+                          }
+          
+                          Swal.fire({
+                              icon: 'error',
+                              title: 'Registration Failed',
+                              html: errorMessages, // Display error messages as HTML
+                          });
+                      }
+                  },
+                  error: function (xhr, status, error) {
+                      // Handle unexpected errors
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'An error occurred',
+                          text: 'Something went wrong. Please try again later.',
+                      });
+                  }
+              });
+          });
+      });
+  </script>
+
+
+  </body>
+</html>

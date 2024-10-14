@@ -1,0 +1,687 @@
+{% extends "layout/base.html" %} 
+{% load static %}
+{% block contents %}
+
+
+    
+
+
+
+
+<style>
+
+    /* Container for the toggle switch */
+.switch-container {
+    display: inline-block;
+    position: relative;
+    width: 60px;
+    height: 34px;
+}
+
+/* Hide the default checkbox input */
+.switch-container .switch-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* The slider background */
+.switch-slider {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 34px; /* Round the slider */
+}
+
+/* The slider knob */
+.switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%; /* Make the knob round */
+}
+
+/* When the input is checked, change the background */
+.switch-input:checked + .switch-slider {
+    background-color: #4CAF50; /* Active color (Green) */
+}
+
+/* Move the knob to the right when checked */
+.switch-input:checked + .switch-slider:before {
+    transform: translateX(26px);
+}
+
+/* Optional: Adding focus styles to make it more accessible */
+.switch-input:focus + .switch-slider {
+    box-shadow: 0 0 1px #4CAF50;
+}
+
+
+    
+  .switch-container {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+  }
+
+  .switch-input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+  }
+
+  .switch-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: 0.4s;
+      border-radius: 34px;
+  }
+
+  .switch-slider:before {
+      position: absolute;
+      content: "";
+      height: 26px;
+      width: 26px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: 0.4s;
+      border-radius: 50%;
+  }
+
+  .switch-input:checked + .switch-slider {
+      background-color: #28a745;
+  }
+
+  .switch-input:checked + .switch-slider:before {
+      transform: translateX(26px);
+  }
+
+ 
+  .balance-cards {
+    display: flex; /* Use flexbox for horizontal layout */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    white-space: nowrap; /* Prevent wrapping of cards */
+}
+
+.card {
+    min-width: 200px; /* Set a minimum width for each card */
+    margin-right: 15px; /* Space between cards */
+}
+
+@media (min-width: 768px) {
+    .balance-cards {
+        overflow-x: hidden; /* Disable horizontal scroll on larger screens */
+        flex-wrap: wrap; /* Allow wrapping on larger screens */
+    }
+
+    .card {
+        flex: 1; /* Cards grow and shrink equally on larger screens */
+        margin-right: 10px; /* Margin for cards */
+    }
+}
+  
+
+
+.table th, .table td {
+  padding: 0.3rem; /* Further reduce padding */
+}
+
+.table {
+  margin-bottom: 0; /* Remove bottom margin */
+}
+</style>
+
+
+
+
+      
+      <!-- partial -->
+      <div class="main-panel bg-white">
+        <div class="content-wrapper">
+            {% if not is_verified %}
+            <div class="alert alert-danger" role="alert">
+                Please verify your email in other to carry out transactions <a href="{% url 'accounts' %}" class="alert-link">CLick to verify</a>
+            </div>
+                {% endif %}
+          <div class="page-header">
+            <h3 class="page-title fw-bold">
+                {{ request.user.username|capfirst }}
+                savings
+            </h3>
+          </div>
+          <label class="switch-container mt-2">
+            <input type="checkbox" class="switch-input" id="toggleSwitch">
+            <span class="switch-slider"></span>
+        </label>
+        <span id="switch-label" class="ms-2"></span>
+          
+          <div class="row grid-margin">
+            <div class="col-12">
+              <div class="card bg-transparent col-12">
+                <div class="card-body">
+                  <div class="balance-cards">
+                      <div class="card bg-transparent border-5 border-info  py-3 shadow">
+                          <div class="card-body ">
+                              <h5 class="text-dark">
+                                  <i class="fa fa-credit-card"></i>
+                                  Main balance
+                              </h5>
+                              <h4 class="switch text-dark mt-2">${{ formatted_Main_balance }}</h4>
+                          </div>
+                      </div>
+                      <div class="card bg-transparent border-5 border-info  py-3 shadow">
+                          <div class="card-body">
+                              <h5 class="text-dark">
+                                  <i class="fa fa-credit-card"></i>
+                                  Total savings
+                              </h5>
+                              <h4 class="switch text-dark mt-2">${{ formatted_total_savings }}</h4>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+            
+              
+              </div>
+            </div>
+          </div>
+          
+
+          <div class="container mt-5">
+            <div class="row">
+                <!-- Column for Daily Savings -->
+                <div class="card mb-3 text-center shadow text-decoration-none py-3" style="background-color: #E0FFFF; cursor: pointer;">
+                    <div class="card-body">
+                        <h3 class="card-title fw-bold">Daily Savings</h3>
+                        <p class="card-text text-dark">
+                            Automatically save {{ daily_savings_percentage }}% on every deposit transaction daily
+                        </p>
+                        <h4 class="card-text text-dark">
+                            <span class="text-success" id="daily-balance">${{ formatted_daily_savings }}</span>
+                        </h4>
+                        <!-- Withdraw Button -->
+                         
+                        <!-- Custom Toggle Switch with Slider Styling -->
+                        <label class="switch-container mt-2">
+                            <input type="checkbox" class="switch-input" id="dailySavingsToggle" 
+                                   {% if is_daily_savings_active %}checked{% endif %} 
+                                   onclick="toggleSavings('daily')">
+                            <span class="switch-slider"></span>
+                        </label>
+                        <span id="switch-label" class="ms-2">
+                            {% if is_daily_savings_active %}
+                                 Active
+                            {% else %}
+                                 Inactive
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="container">
+                        <button id="withdraw" class="btn btn-primary" onclick="openWithdrawModal()">Withdraw</button>
+                    </div>
+                </div>
+                        
+                
+                                        <!-- Column for Monthly Savings -->
+            <div class="col-md-4 mb-4">
+                <div class="card text-center shadow text-decoration-none py-3" style="background-color: #ffe0b2; cursor: pointer;">
+                    <div class="card-body">
+                        <h3 class="card-title fw-bold">Monthly Savings</h3>
+                        <p class="card-text text-dark">
+                            Monthly fixed savings, get {{ monthly_savings_percentage }}% every month end
+                        </p>
+                        <h4 class="card-text text-dark">
+                            <span class="text-success" id="monthly-balance">${{ formatted_monthly_savings }}</span>
+                        </h4>
+                        <!-- Button to trigger the SweetAlert modal -->
+                        <button id="monthly" class="btn btn-primary mt-3">Save</button>
+                    </div>
+                </div>
+            </div>
+                            
+
+           
+        
+                <!-- Column for Yearly Savings -->
+                <div class="col-md-4 mb-4">
+                    <div class="card text-center shadow text-decoration-none py-3" style="background-color: #c8e6c9; cursor: pointer;">
+                        <div class="card-body">
+                            <h3 class="card-title fw-bold">Yearly Savings</h3>
+                            <p class="card-text text-dark">
+                                Yearly fixed savings, get {{ yearly_savings_percentage }}% back on fixed savings
+                            </p>
+                            <h4 class="card-text text-dark">
+                                <span class="text-success" id="yearly-balance">${{ formatted_yearly_savings }}</span>
+                            </h4>
+                            <button id="yearly" class="btn btn-primary mt-3">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    
+
+          <div class="row">
+
+            
+            <div class="col-md-8 grid-margin stretch-card">
+                <div class="card bg-transparent">
+                    <div class="card-body">
+                        <h4 class="card-title d-flex align-items-center">
+                            <i class="fas fa-exchange-alt me-2" style="font-size: 1.5rem; color: #007bff;"></i>
+                            Recent Savings Transactions
+                        </h4>
+                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th style="font-size: 0.9rem; padding: 0.5rem;">Transaction ID</th>
+                                        <th style="font-size: 0.9rem; padding: 0.5rem;">Description</th>
+                                        <th style="font-size: 0.9rem; padding: 0.5rem;">Category</th>
+                                        <th style="font-size: 0.9rem; padding: 0.5rem;">Amount</th>
+                                        <th style="font-size: 0.9rem; padding: 0.5rem;">Status</th>
+                                        <th style="font-size: 0.9rem; padding: 0.5rem;">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% if savings_transactions %}
+                                        {% for transaction in savings_transactions %}
+                                            <tr style="height: 40px;"> <!-- Set a fixed height for rows -->
+                                                <td>{{ transaction.id }}</td>
+                                                <td>{{ transaction.description }}</td>
+                                                <td>{{ transaction.category }}</td>
+                                                <td>${{ transaction.amount }}</td>
+                                                <td>
+                                                    <span class="badge 
+                                                        {% if transaction.status == 'Completed' %} bg-success 
+                                                        {% elif transaction.status == 'Pending' %} bg-warning 
+                                                        {% else %} bg-danger {% endif %}">
+                                                        {{ transaction.get_status_display }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ transaction.date|date:"M d, Y h:i A" }}</td>
+                                            </tr>
+                                        {% empty %}
+                                            <tr>
+                                                <td colspan="6" class="text-center text-muted">No recent savings transactions found.</td>
+                                            </tr>
+                                        {% endfor %}
+                                    {% else %}
+                                        <tr>
+                                            <td colspan="6" class="text-center text-muted">No transactions to display.</td>
+                                        </tr>
+                                    {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+
+
+          
+
+          </div>
+          <div class="row">
+           
+
+
+
+
+            <div class="col-md-4 grid-margin stretch-card">
+             
+            </div>
+          </div>
+        </div>
+       
+
+  
+  
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.4.10/dist/sweetalert2.min.js"></script>
+
+    <script>
+        document.getElementById('dailySavingsToggle').addEventListener('change', function() {
+            const isActive = this.checked;  // Get the toggle state (checked = true, unchecked = false)
+    
+            // Send the state to the back-end via AJAX
+            fetch("{% url 'toggle_daily_savings' %}", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}", // Include the CSRF token for Django security
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    "is_daily_savings_active": isActive
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Update the switch label based on the server response
+                const switchLabel = document.getElementById('switch-label');
+                if (data.success) {
+                    switchLabel.textContent = isActive ? 'Active' : 'Inactive';
+                } else {
+                    alert('An error occurred while updating the savings status.');
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert('An error occurred while updating the savings status.');
+            });
+        });
+    </script>
+
+
+
+
+   
+<script>
+    function openWithdrawModal() {
+        Swal.fire({
+            title: 'Withdraw from Savings',
+            input: 'number',
+            inputLabel: 'Enter the amount to withdraw',
+            inputPlaceholder: 'Amount',
+            showCancelButton: true,
+            confirmButtonText: 'Withdraw',
+            cancelButtonText: 'Cancel',
+            preConfirm: (amount) => {
+                if (!amount || amount <= 0) {
+                    Swal.showValidationMessage('Please enter a valid amount');
+                } else {
+                    return amount;
+                }
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const amount = result.value;
+                // Send the amount to the backend via AJAX or a form submission
+                fetch("{% url 'withdraw_daily_savings' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}', // Add CSRF token for security
+                    },
+                    body: JSON.stringify({ amount: amount })
+                })
+                .then(response => {
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire('Success', 'Withdrawal completed successfully!', 'success');
+                        location.reload();
+                    } else {
+                        Swal.fire('Error', data.error, 'error');
+                    }
+                })
+                .catch(error => {
+                    Swal.fire('Error', 'There was an error processing your request.', 'error');
+                });
+            }
+        });
+    }
+</script>
+
+
+<script>
+    document.getElementById('monthly').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Monthly Savings',
+            html: `
+                <form>
+                    <div class="form-group">
+                        <label for="amount">Amount:</label>
+                        <input type="number" id="amount" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="start-date">Start Date:</label>
+                        <input type="date" id="start-date" class="form-control" value="${getCurrentDate()}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="end-date">Payment Date:</label>
+                        <input type="date" id="end-date" class="form-control" value="${getEndDate()}" required>
+                    </div>
+                </form>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Save',
+            cancelButtonText: 'Cancel',
+            focusConfirm: false,
+            preConfirm: () => {
+                const amount = document.getElementById('amount').value;
+                const startDate = document.getElementById('start-date').value;
+                const endDate = document.getElementById('end-date').value;
+
+                // Validate the payment date
+                const startDateObj = new Date(startDate);
+                const endDateObj = new Date(endDate);
+                const oneMonthLater = new Date(startDateObj);
+                oneMonthLater.setMonth(startDateObj.getMonth() + 1);
+
+                if (endDateObj.getTime() < startDateObj.getTime() + 30 * 24 * 60 * 60 * 1000) {
+                    Swal.showValidationMessage('Payment date must be at least one month from the start date');
+                    return;
+                }
+
+                if (endDateObj.getTime() > oneMonthLater.getTime()) {
+                    Swal.showValidationMessage('Payment date must not exceed one month from the start date');
+                    return;
+                }
+
+                // Return the form data
+                return { amount, startDate, endDate };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send the form data to the back-end via AJAX
+                fetch("{% url 'save_monthly_savings' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}", // Include the CSRF token for Django security
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "amount": result.value.amount,
+                        "start_date": result.value.startDate,
+                        "end_date": result.value.endDate
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Update the UI based on the server response
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Monthly savings saved successfully.'
+                        }).then(() => {
+                            location.reload(); // Reload the page to reflect the updated balance
+                        })
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while saving the monthly savings.'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while saving the monthly savings.'
+                    });
+                });
+            }
+        });
+    });
+
+    // Helper function to get the current date
+    function getCurrentDate() {
+        const today = new Date();
+        return today.toISOString().slice(0, 10);
+    }
+
+    // Helper function to get the end date (one month from the current date)
+    function getEndDate() {
+        const today = new Date();
+        today.setMonth(today.getMonth() + 1);
+        return today.toISOString().slice(0, 10);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    document.getElementById('yearly').addEventListener('click', function() {
+        Swal.fire({
+            title: 'Yearly Savings',
+            html: `
+                <form>
+                    <div class="form-group">
+                        <label for="amount">Amount:</label>
+                        <input type="number" id="amount" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="start-date">Start Date:</label>
+                        <input type="date" id="start-date" class="form-control" value="${getCurrentDate()}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="end-date">Payment Date:</label>
+                        <input type="date" id="end-date" class="form-control" value="${getEndDate()}" required>
+                    </div>
+                </form>
+            `,
+            showCancelButton: true,
+            confirmButtonText: 'Save',
+            cancelButtonText: 'Cancel',
+            focusConfirm: false,
+            preConfirm: () => {
+                const amount = document.getElementById('amount').value;
+                const startDate = document.getElementById('start-date').value;
+                const endDate = document.getElementById('end-date').value;
+
+                // Validate the payment date
+                const startDateObj = new Date(startDate);
+                const endDateObj = new Date(endDate);
+                const oneMonthLater = new Date(startDateObj);
+                oneMonthLater.setMonth(startDateObj.getMonth() + 1);
+
+                if (endDateObj.getTime() < startDateObj.getTime() + 30 * 24 * 60 * 60 * 1000) {
+                    Swal.showValidationMessage('Payment date must be at least one month from the start date');
+                    return;
+                }
+
+                if (endDateObj.getTime() > oneMonthLater.getTime()) {
+                    Swal.showValidationMessage('Payment date must not exceed one month from the start date');
+                    return;
+                }
+
+                // Return the form data
+                return { amount, startDate, endDate };
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send the form data to the back-end via AJAX
+                fetch("{% url 'save_yearly_savings' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}", // Include the CSRF token for Django security
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        "amount": result.value.amount,
+                        "start_date": result.value.startDate,
+                        "end_date": result.value.endDate
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Update the UI based on the server response
+                    if (data.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Yearly savings saved successfully.'
+                        }).then(() => {
+                            location.reload(); // Reload the page to reflect the updated balance
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'An error occurred while saving the yearly savings.'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while saving the yearly savings.'
+                    });
+                });
+            }
+        });
+    });
+
+    // Helper function to get the current date
+    function getCurrentDate() {
+        const today = new Date();
+        return today.toISOString().slice(0, 10);
+    }
+
+    // Helper function to get the end date (one month from the current date)
+    function getEndDate() {
+        const today = new Date();
+        today.setMonth(today.getMonth() + 1);
+        return today.toISOString().slice(0, 10);
+    }
+</script>
+
+
+
+
+{% endblock contents %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
