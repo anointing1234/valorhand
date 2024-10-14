@@ -1,2 +1,2 @@
 
-PASSWORD_RESET_URL_TEMPLATE = "http://127.0.0.1:8000/accounts/password_reset/{token}/"
+PASSWORD_RESET_URL_TEMPLATE = "http://web-production-23342.up.railway.app/accounts/password_reset/{token}/"
