@@ -964,35 +964,39 @@ def account_settings(request):
 def toggle_daily_savings(request):
     if request.method == 'POST':
         try:
-            # Get or create a UserSavings instance for the logged-in user
-            user_savings, created = UserSavings.objects.get_or_create(
-                user=request.user,
-                defaults={
-                    'amount': 0.00,
-                    'profit_percentage': 0.00,
-                    'start_date': timezone.now(),
-                    'payment_date': timezone.now() + timedelta(days=30),  # Example future payment date
-                    'is_daily_savings_active': False,
-                    'is_monthly_savings_active': False,
-                    'is_yearly_savings_active': False,
-                }
-            )
+            # Get the most recent UserSavings entry for the user, based on the start_date
+            user_savings = UserSavings.objects.filter(user=request.user).order_by('-start_date').first()
 
-            # Parse the JSON request data
+            if not user_savings:
+                # If no savings exist, create a new entry
+                user_savings = UserSavings.objects.create(
+                    user=request.user,
+                    amount=0.00,
+                    profit_percentage=0.00,
+                    start_date=timezone.now(),
+                    payment_date=timezone.now() + timedelta(days=30),  # Example future payment date
+                    is_daily_savings_active=False,
+                    is_monthly_savings_active=False,
+                    is_yearly_savings_active=False,
+                )
+
+            # Parse the incoming JSON request data
             data = json.loads(request.body)
             is_daily_savings_active = data.get('is_daily_savings_active', False)
 
-            # Update the is_daily_savings_active field
+            # Update the 'is_daily_savings_active' field for the specific entry
             user_savings.is_daily_savings_active = is_daily_savings_active
             user_savings.save()
 
             return JsonResponse({'success': True})
+        
         except Exception as e:
+            # Log and return error in case of any issues
             print(e)
             return JsonResponse({'success': False, 'error': str(e)})
+
+    # Return an error for non-POST requests
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
-
-
 
 
 def withdraw_view(request):

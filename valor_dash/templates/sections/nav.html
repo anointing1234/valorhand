@@ -1,15 +1,15 @@
 {% load static %}
 
-
 <!-- partial:partials/_navbar.html -->
 <nav class="navbar tiles info col-lg-12 col-12 p-0 fixed-top d-flex flex-row default-layout-navbar">
     <div class="text-center bg-dark navbar-brand-wrapper d-flex align-items-center justify-content-center">
-      <h5 class="fw-bold" style="font-size: 24px; color: #4A4A4A; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1); background-color: #f8f9fa; padding: 10px 15px; border-radius: 5px; margin: 0;">
-        VHD
+      <h5 class="fw-bold ">
+        <img  class="navbar-brand brand-logo" src="{% static 'images/logo-white.png' %}" alt="profile"/>
+        <a class="navbar-brand brand-logo-mini"></a>
     </h5>
     
     </div>
-    <div class="navbar-menu-wrapper bg-dark d-flex align-items-stretch">
+    <div style="background-color:black;" class="navbar-menu-wrapper bg-dark d-flex align-items-stretch">
       <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
         <span class="fas fa-bars"></span>
       </button>
@@ -52,7 +52,7 @@
 
 
   
-  <div class="container-fluid page-body-wrapper">
+  <div class="container-fluid  page-body-wrapper">
 
 
 
@@ -60,47 +60,55 @@
 
 
 
-    <!-- partial:partials/_sidebar.html -->
-    <nav class="sidebar  sidebar-offcanvas " id="sidebar">
-      <ul class="nav mt-5">
-        <li class="nav-item nav-profile">
-          <div class="nav-link">
-      
-          </div>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'home_dash' %}">
-            <i class="fa fa-home menu-icon"></i>
-            <h4 class="menu-title ">Dashboard</h4>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'accounts' %}">
-            <i class="fa fa-user-circle menu-icon"></i>
-            <h4 class="menu-title ">Account</h4>
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'Savings' %}">
-            <i class="fa fa-cubes menu-icon"></i>
-            <h4 class="menu-title ">Savings</h4>
-          </a>
-        </li>
-        <li class="nav-item">
-          {% if is_verified %}
-          <a class="nav-link"  href="{% url 'Transactions' %}">
-            <i class="fa-solid fa-history menu-icon"></i>
-            <h4 class="menu-title ">Transactions</h4>
-          </a>
-          {% else %}
-          <a class="nav-link"  href="#">
-            <i class="fa-solid fa-history menu-icon"></i>
-            <h4 class="menu-title ">Transactions</h4>
-          </a>
-          {% endif %}
-        </li> 
-        
-      </ul>
-    </nav>
+    <!-- <!-- Styled Sidebar -->
+<nav class="sidebar sidebar-offcanvas  text-light" id="sidebar">
+  <ul class="nav flex-column mt-5">
+    <!-- Sidebar profile section -->
+    <li class="nav-item nav-profile">
+      <div class="nav-link">
+        <!-- Profile details can be added here, like a profile picture or user name -->
+      </div>
+    </li>
+    
+    <!-- Dashboard link -->
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center" href="{% url 'home_dash' %}">
+        <i class="fa fa-home menu-icon"></i>
+        <h4 class="menu-title ms-3">Dashboard</h4>
+      </a>
+    </li>
+
+    <!-- Account link -->
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center" href="{% url 'accounts' %}">
+        <i class="fa fa-user-circle menu-icon"></i>
+        <h4 class="menu-title ms-3">Account</h4>
+      </a>
+    </li>
+
+    <!-- Savings link -->
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center" href="{% url 'Savings' %}">
+        <i class="fa fa-cubes menu-icon"></i>
+        <h4 class="menu-title ms-3">Savings</h4>
+      </a>
+    </li>
+
+    <!-- Transactions link with verification check -->
+    <li class="nav-item">
+      {% if is_verified %}
+        <a class="nav-link d-flex align-items-center" href="{% url 'Transactions' %}">
+          <i class="fa-solid fa-history menu-icon"></i>
+          <h4 class="menu-title ms-3">Transactions</h4>
+        </a>
+      {% else %}
+        <a class="nav-link d-flex align-items-center" href="#">
+          <i class="fa-solid fa-history menu-icon"></i>
+          <h4 class="menu-title ms-3">Transactions</h4>
+        </a>
+      {% endif %}
+    </li> 
+  </ul>
+</nav>
 
 

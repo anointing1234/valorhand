@@ -8,6 +8,59 @@
 
 
 <style>
+
+  /* Styling for the Deposit button */
+.btn-deposit {
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 500;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hover effect */
+.btn-deposit:hover {
+  background-color: #0d6efd; /* Darker blue on hover */
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.5); /* Add shadow effect */
+}
+
+/* Click ripple effect */
+.btn-deposit:active::after {
+  content: '';
+  position: absolute;
+  width: 300%;
+  height: 300%;
+  background: rgba(255, 255, 255, 0.3);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.4s ease-out;
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.btn-deposit:active::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Ensure the text is always on top */
+.btn-deposit span {
+  position: relative;
+  z-index: 2;
+}
+
+/* Margin spacing */
+.mt-2 {
+  margin-top: 1rem !important;
+}
+
+.mb-2 {
+  margin-bottom: 1rem !important;
+}
+
+
   .switch-container {
       position: relative;
       display: inline-block;
@@ -112,9 +165,10 @@
               Dashboard
             </h3>
           </div>
-          <h4 class="name text-dark mb-3">
-            Welcome,{{ request.user.username|capfirst  }}
-            </h4>
+          <h4 class="name text-dark mb-2">
+            {{ request.user.username|capfirst  }}
+           <p><span>Hello,wash your hands 👋🏼</span></p>
+          </h4>
           <label class="switch-container">
             <input type="checkbox" class="switch-input" id="toggleSwitch">
             <span class="switch-slider"></span>
@@ -122,118 +176,156 @@
         <span id="switch-label" class="ms-2"></span>
           
         <div class="container-fluid mt-2 mb-2 d-flex justify-content-end">
-          <a href="{% url 'Transactions' %}" class="btn btn-outline-dark me-5  text-decoration-none">Deposit</a>
+          
+          <a href="{% url 'Transactions' %}" class="btn btn-info me-5 btn-deposit text-decoration-none">
+            Deposit
+          </a>
         </div>
         
         
+        
 
-          <div class="row grid-margin">
-            <div class="col-12">
-              <div class="card bg-light col-12">
-                <div class="card-body">
-                  <div class="balance-cards">
-                      <div class="card d  py-3 shadow">
-                          <div class="card-body">
-                              <p class="text-light">
-                                  <i class="fa fa-credit-card"></i>
-                                  Main balance
-                              </p>
-                              <h3 class="switch text-light mt-2">${{ formatted_Main_balance }}</h3>
-                          </div>
-                      </div>
-                      <div class="card T  py-3 shadow">
-                          <div class="card-body">
-                              <p class="text-light">
-                                <i class="fa fa-credit-card"></i>
-                                  Total savings
-                              </p>
-                              <h3 class="switch text-light mt-2">${{ formatted_total_savings }}</h3>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-            
-              
-              </div>
+<div class="row grid-margin">
+  <div class="col-12">
+    <div class="card col-12" >
+      <div class="card-body">
+        <div class="balance-cards d-flex justify-content-between">
+          <!-- Main balance card -->
+          <div class="card py-3 shadow" style="background: linear-gradient(135deg, #232526, #414345);">
+            <div class="card-body">
+              <p class="text-white">
+                <i class="fa fa-credit-card"></i> Main balance
+              </p>
+              <h3 class="switch text-white mt-2">${{ formatted_Main_balance }}</h3>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-12  grid-margin stretch-card">
-              <div class="card bg-light">
-                <div class="card-body">
-                  <h4 class="card-title">
-                    <i class="fas fa-chart-line"></i>
-                    Transactions this month
-                  </h4>
-                  <canvas id="orders-chart"></canvas>
-                  <div id="orders-chart-legend" class="orders-chart-legend"></div>                  
-                </div>
-              </div>
-            </div>       
+
+          <!-- Total savings card -->
+          <div class="card py-3 shadow" style="background: linear-gradient(135deg, #1f1c2c, #928dab);">
+            <div class="card-body">
+              <p class="text-white">
+                <i class="fa fa-credit-card"></i> Total savings
+              </p>
+              <h3 class="switch text-white mt-2">${{ formatted_total_savings }}</h3>
+            </div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div>
+  <!-- TradingView Widget BEGIN -->
+<div class="tradingview-widget-container">
+  <div class="tradingview-widget-container__widget"></div>
+  <div class="tradingview-widget-copyright">
+    <a href="https://www.tradingview.com" rel="noopener" target="_blank">
+      <span class="blue-text"></span>
+    </a>
+  </div>
+  <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-forex-cross-rates.js" async>
+  {
+  "width": "100%",
+  "height": "400",
+  "currencies": [
+    "EUR",
+    "USD",
+    "JPY",
+    "GBP",
+    "AUD",
+    "CAD",
+    "CHF",
+    "CNY"
+  ],
+  "locale": "en",
+  "isTransparent": false,
+  "colorTheme": "light"
+}
+  </script>
+</div>
+<!-- TradingView Widget END -->
+
+</div>
+
+         
           <div class="row">
             <div class="col-md-4 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body  d-flex flex-column">
-                  <h4 class="card-title">
-                    <i class="fas fa-tasks"></i> <!-- Changed icon to represent a to-do list -->
+              <div class="card shadow-lg rounded-lg" style="background: linear-gradient(135deg, #2c3e50, #4ca1af); color: #fff;">
+                <div class="card-body d-flex flex-column">
+                  <h4 class="card-title d-flex align-items-center" style="color: #fff;">
+                    <i class="fas fa-tasks me-2 text-warning"></i> <!-- Modern icon with vibrant gold -->
                     Account Setup Checklist
                   </h4>
                   <div class="flex-grow-1 d-flex flex-column justify-content-between">
-                    <!-- To-Do List Implementation -->
-                    <ul class="list-group list-group-flush mt-3">
-                      <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <!-- Modern To-Do List Implementation -->
+                    <ul class="list-group list-group-flush mt-3" style="color: #fff;">
+                      <!-- Step 1: Verify Email -->
+                      <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
                         <div class="form-check">
                           <input class="form-check-input" type="checkbox" id="verifyEmailCheckbox" {% if is_verified %}checked{% endif %} disabled>
-                          <label class="form-check-label {% if is_verified %}text-success{% endif %}" for="verifyEmailCheckbox">Verify Email
-                              {% if is_verified %}
-                                  <span class="text-success ms-2">&#10003;</span> <!-- Checkmark icon -->
-                              {% endif %}
+                          <label class="form-check-label {% if is_verified %}text-success{% else %}text-light{% endif %}" for="verifyEmailCheckbox">
+                            Verify Email
+                            {% if is_verified %}
+                              <span class="text-success ms-2"><i class="fas fa-check-circle"></i></span> <!-- Modern checkmark icon -->
+                            {% endif %}
                           </label>
-                      </div>                      
-                        <span class="badge bg-light border-dark rounded-pill">Step 1</span>
+                        </div>
+                        <span class="badge rounded-pill" style="background-color: #f39c12; color: #fff;">Step 1</span> <!-- Vibrant gold badge -->
                       </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                        <input class="form-check-input" type="checkbox" id="verifyEmailCheckbox" {% if all_fields_filled %}checked{% endif %} disabled>
-                          <label class="form-check-label {% if all_fields_filled %}text-success{% endif %}" for="verifyEmailCheckbox">
-                              Complete account Setup
-                              {% if all_fields_filled %}
-                                  <span class="text-success ms-2">&#10003;</span> <!-- Checkmark icon -->
-                              {% endif %}
+            
+                      <!-- Step 2: Complete Account Setup -->
+                      <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="completeSetupCheckbox" {% if all_fields_filled %}checked{% endif %} disabled>
+                          <label class="form-check-label {% if all_fields_filled %}text-success{% else %}text-light{% endif %}" for="completeSetupCheckbox">
+                            Complete Account Setup
+                            {% if all_fields_filled %}
+                              <span class="text-success ms-2"><i class="fas fa-check-circle"></i></span> <!-- Modern checkmark icon -->
+                            {% endif %}
                           </label>
-                      </div>
-                      
-                        <span class="badge bg-light border-dark rounded-pill">Step 2</span>
+                        </div>
+                        <span class="badge rounded-pill" style="background-color: #27ae60; color: #fff;">Step 2</span> <!-- Green badge for success -->
                       </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center">
-                      <div>
-                          <input class="form-check-input" type="checkbox" id="verifyEmailCheckbox" {% if has_deposit %}checked{% endif %} disabled>
-                          <label class="form-check-label {% if has_deposit %}text-success{% endif %}" for="verifyEmailCheckbox">
+            
+                      <!-- Step 3: Fund Your Account -->
+                      <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="fundAccountCheckbox" {% if has_deposit %}checked{% endif %} disabled>
+                          <label class="form-check-label {% if has_deposit %}text-success{% else %}text-light{% endif %}" for="fundAccountCheckbox">
                             Fund Your Account
-                              {% if has_deposit %}
-                                  <span class="text-success ms-2">&#10003;</span> <!-- Checkmark icon -->
-                              {% endif %}
-                      </div>
-                      
-                        <span class="badge bg-light border-dark rounded-pill">Step 3</span>
+                            {% if has_deposit %}
+                              <span class="text-success ms-2"><i class="fas fa-check-circle"></i></span>
+                            {% endif %}
+                          </label>
+                        </div>
+                        <span class="badge rounded-pill" style="background-color: #2980b9; color: #fff;">Step 3</span> <!-- Blue badge for financial step -->
                       </li>
-                      <li class="list-group-item d-flex justify-content-between align-items-center">
-                        <div>
-                          <input class="form-check-input" type="checkbox" id="verifyEmailCheckbox" {% if is_saved %}checked{% endif %} disabled>
-                          <label class="form-check-label {% if is_saved %}text-success{% endif %}" for="verifyEmailCheckbox">
-                            Start saving
-                              {% if is_saved %}
-                                  <span class="text-success ms-2">&#10003;</span> <!-- Checkmark icon -->
-                              {% endif %}
-                      </div>
-                        <span class="badge bg-light border-dark rounded-pill">Step 4</span>
+            
+                      <!-- Step 4: Start Saving -->
+                      <li class="list-group-item d-flex justify-content-between align-items-center" style="background-color: transparent;">
+                        <div class="form-check">
+                          <input class="form-check-input" type="checkbox" id="startSavingCheckbox" {% if is_saved %}checked{% endif %} disabled>
+                          <label class="form-check-label {% if is_saved %}text-success{% else %}text-light{% endif %}" for="startSavingCheckbox">
+                            Start Saving
+                            {% if is_saved %}
+                              <span class="text-success ms-2"><i class="fas fa-check-circle"></i></span>
+                            {% endif %}
+                          </label>
+                        </div>
+                        <span class="badge rounded-pill" style="background-color: #8e44ad; color: #fff;">Step 4</span> <!-- Purple badge for final step -->
                       </li>
                     </ul>
                   </div>
                 </div>
               </div>
             </div>
+            
+            
+
+
+
+
             
             <div class="col-md-8 grid-margin stretch-card">
               <div class="card bg-transparent">
@@ -242,56 +334,55 @@
                           <i class="fas fa-exchange-alt me-2" style="font-size: 1.5rem; color: #007bff;"></i>
                           Recent Transactions
                       </h4>
-                      <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
-                      <!-- Transactions Table -->
-<table class="table">
-  <thead>
-      <tr>
-          <th>Description</th>
-          <th>Category</th>
-          <th>Amount</th>
-          <th>Status</th>
-          <th>Date</th>
-      </tr>
-  </thead>
-  <tbody>
-      {% if recent_transactions %}
-          {% for transaction in recent_transactions %}
-              <tr style="height: 40px;"> <!-- Set a fixed height for rows -->
-                  <td>{{ transaction.description }}</td>
-                  <td>{{ transaction.category }}</td>
-                  <td>${{ transaction.amount }}</td>
-                  <td>
-                      <span class="badge 
-                          {% if transaction.status == 'Completed' %} bg-success 
-                          {% elif transaction.status == 'Pending' %} bg-warning 
-                          {% else %} bg-danger {% endif %}">
-                          {{ transaction.get_status_display }}
-                      </span>
-                  </td>
-                  <td>{{ transaction.date|date:"M d, Y h:i A" }}</td>
-              </tr>
-          {% endfor %}
-      {% else %}
-          <tr>
-              <td colspan="6" class="text-center text-muted">No transactions found.</td>
-          </tr>
-      {% endif %}
-  </tbody>
-</table>
-
+                      <div class="table-responsive shadow-sm rounded" style="max-height: 300px; overflow-y: auto;">
+                        <!-- Transactions Table -->
+                        <table class="table table-hover align-middle text-center">
+                          <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
+                            <tr>
+                              <th>Description</th>
+                              <th>Category</th>
+                              <th>Amount</th>
+                              <th>Status</th>
+                              <th>Date</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {% if recent_transactions %}
+                              {% for transaction in recent_transactions %}
+                                <tr>
+                                  <td>{{ transaction.description }}</td>
+                                  <td>{{ transaction.category }}</td>
+                                  <td>${{ transaction.amount }}</td>
+                                  <td>
+                                    <span class="badge 
+                                      {% if transaction.status == 'Completed' %} bg-success 
+                                      {% elif transaction.status == 'Pending' %} bg-warning 
+                                      {% else %} bg-danger {% endif %}">
+                                      {{ transaction.get_status_display }}
+                                    </span>
+                                  </td>
+                                  <td>{{ transaction.date|date:"M d, Y h:i A" }}</td>
+                                </tr>
+                              {% endfor %}
+                            {% else %}
+                              <tr>
+                                <td colspan="5" class="text-center text-muted">No transactions found.</td>
+                              </tr>
+                            {% endif %}
+                          </tbody>
+                        </table>
                       </div>
-                  </div>
-              </div>
-          </div>
+                      
+</div>
+</div>
+</div>
           
 
           </div>
+
+
+
           <div class="row">
-           
-
-
-
 
             <div class="col-md-4 grid-margin stretch-card">
              
