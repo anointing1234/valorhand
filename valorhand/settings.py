@@ -30,7 +30,7 @@ environ.Env.read_env(os.path.join(BASE_DIR,'file.env'))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # Security settings
 ALLOWED_HOSTS = ["web-production-23342.up.railway.app"]
