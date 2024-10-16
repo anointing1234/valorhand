@@ -30,14 +30,16 @@ environ.Env.read_env(os.path.join(BASE_DIR,'file.env'))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
+
 
 # Security settings
 ALLOWED_HOSTS = ["web-production-23342.up.railway.app",'127.0.0.1']
 
 
 
-CSRF_TRUSTED_ORIGINS = ["https://web-production-23342.up.railway.app"]
+
+# CSRF_TRUSTED_ORIGINS = ["https://web-production-23342.up.railway.app"]
 
 
 AUTH_USER_MODEL = 'accounts.Account'
@@ -137,12 +139,15 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = os.path.join(BASE_DIR,'staticfiles')
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
+    os.path.join(BASE_DIR,'static')
 ]
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+WHITENOISE_USE_FINDERS = True
+WHITENOISE_MANIFEST_STATIC_FILES = True
+WHITENOISE_KEEP_ONLY_HASHED_FILES = True
 
 
 MEDIA_URL = '/media/'
@@ -165,28 +170,6 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = env('EMAIL_HOST_USER')
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
-
-
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'django_error.log'),
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    },
-}
-
 
 
 
