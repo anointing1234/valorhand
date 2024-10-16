@@ -33,12 +33,12 @@ SECRET_KEY = env('SECRET_KEY')
 DEBUG = False
 
 # Security settings
-# ALLOWED_HOSTS = ["web-production-23342.up.railway.app",'127.0.0.1']
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ["web-production-23342.up.railway.app"]
 
 
 
-# CSRF_TRUSTED_ORIGINS = ["https://web-production-23342.up.railway.app"]
+
+CSRF_TRUSTED_ORIGINS = ["https://web-production-23342.up.railway.app"]
 
 
 AUTH_USER_MODEL = 'accounts.Account'
