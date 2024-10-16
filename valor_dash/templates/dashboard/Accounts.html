@@ -134,43 +134,7 @@
       height: 34px;
   }
 
-  .switch-input {
-      opacity: 0;
-      width: 0;
-      height: 0;
-  }
-
-  .switch-slider {
-      position: absolute;
-      cursor: pointer;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: #ccc;
-      transition: 0.4s;
-      border-radius: 34px;
-  }
-
-  .switch-slider:before {
-      position: absolute;
-      content: "";
-      height: 26px;
-      width: 26px;
-      left: 4px;
-      bottom: 4px;
-      background-color: white;
-      transition: 0.4s;
-      border-radius: 50%;
-  }
-
-  .switch-input:checked + .switch-slider {
-      background-color: #28a745;
-  }
-
-  .switch-input:checked + .switch-slider:before {
-      transform: translateX(26px);
-  }
+ 
   /* Gradient Background */
 .bg-gradient {
   background: linear-gradient(135deg, #007bff, #6610f2);
@@ -679,71 +643,12 @@ p.text-light {
                 });
             }
             </script>
-            
 
 
 
 
+    
 
-      
-          <script>
-              // Get the toggle switch and elements to be hidden
-              const toggleSwitch = document.getElementById('toggleSwitch');
-              const switchElements = document.querySelectorAll('.switch');
-              const switchLabel = document.getElementById('switch-label');
-      
-              // Function to toggle the visibility of elements
-              function toggleVisibility() {
-                  const isHidden = localStorage.getItem('contentHidden') === 'true';
-      
-                  if (isHidden) {
-                      switchElements.forEach(element => {
-                          element.textContent = '**********';
-                      });
-                      toggleSwitch.checked = true;
-                  } else {
-                      switchElements.forEach(element => {
-                          element.textContent = element.getAttribute('data-original-text');
-                      });
-                      toggleSwitch.checked = false;
-                  }
-              }
-      
-              // Function to update local storage and toggle elements
-              function toggleContent() {
-                  const isHidden = localStorage.getItem('contentHidden') === 'true';
-                  localStorage.setItem('contentHidden', !isHidden);
-                  toggleVisibility();
-              }
-      
-              // Store the original text in a custom attribute and initialize visibility
-              switchElements.forEach(element => {
-                  element.setAttribute('data-original-text', element.textContent);
-              });
-              toggleVisibility();
-      
-              // Add event listener to toggle switch
-              toggleSwitch.addEventListener('change', toggleContent);
-
-
-
-               // Function to update local storage and toggle elements
-            function toggleContent() {
-              const isHidden = localStorage.getItem('contentHidden') === 'true';
-              localStorage.setItem('contentHidden', !isHidden);
-              toggleVisibility();
-          }
-  
-          // Store the original text in a custom attribute and initialize visibility
-          switchElements.forEach(element => {
-              element.setAttribute('data-original-text', element.textContent);
-          });
-          toggleVisibility();
-  
-          // Add event listener to toggle switch
-          toggleSwitch.addEventListener('change', toggleContent);
-
-          </script>
   
     
 
