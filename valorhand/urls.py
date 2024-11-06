@@ -19,11 +19,7 @@ from django.urls import path
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
-<<<<<<< HEAD
-from accounts.views import confirm_deposit, decline_deposit,confirm_withdrawal,decline_withdrawal,confirm_transfer,decline_transfer,custom_404_view, custom_500_view
-=======
 from accounts.views import confirm_deposit, decline_deposit,confirm_withdrawal,decline_withdrawal,confirm_transfer,decline_transfer
->>>>>>> bffdd13b225558ea11fdba4ce16602f3d26f203c
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -41,15 +37,5 @@ urlpatterns = [
 ]
 
 
-<<<<<<< HEAD
-
 # Serving media files during development
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-# Error handlers
-handler404 = custom_404_view
-handler500 = custom_500_view
-=======
-# Serving media files during development
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
->>>>>>> bffdd13b225558ea11fdba4ce16602f3d26f203c
