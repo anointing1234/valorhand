@@ -217,11 +217,8 @@ def reset_password(request):
 def password_reset(request):
     return render(request,'registeration/password_update.html')
 
-<<<<<<< HEAD
 def custom_404_view(request, exception):
     return render(request, '404.html', status=404)
 
 def custom_500_view(request):
     return render(request, '500.html', status=500)
-=======
->>>>>>> bffdd13b225558ea11fdba4ce16602f3d26f203c
