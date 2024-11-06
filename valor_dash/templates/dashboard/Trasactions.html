@@ -1,0 +1,932 @@
+{% extends "layout/base.html" %}
+{% load static %}
+{% block contents %}
+
+<style>
+
+    .hidden {
+        display: none;
+    }
+
+    .slide-in {
+        animation: slideIn 0.5s forwards;
+    }
+
+    .slide-out {
+        animation: slideOut 0.5s forwards;
+    }
+
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(-100%);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideOut {
+        from {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        to {
+            opacity: 0;
+            transform: translateX(100%);
+        }
+    }
+    .custom-card {
+        height: auto;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s;
+    }
+
+    .custom-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .profile-pic {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        object-position: center;
+        border-radius: 50%;
+    }
+
+    .nav-profile {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .nav-link {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .page-header {
+        margin: 30px 0;
+        text-align: center;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-custom {
+        background-color: #007bff;
+        color: white;
+        border-radius: 5px;
+        width: 100%;
+        padding: 12px;
+        transition: background-color 0.3s;
+    }
+
+    .btn-custom:hover {
+        background-color: #0056b3;
+    }
+    
+    
+  .switch-container {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 30px;
+}
+
+.switch-input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.switch-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.4s;
+    border-radius: 34px;
+}
+
+.switch-slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.4s;
+    border-radius: 50%;
+}
+
+.switch-input:checked + .switch-slider {
+    background-color: #28a745;
+}
+
+.switch-input:checked + .switch-slider:before {
+    transform: translateX(26px);
+}
+
+</style>
+
+  <!-- Main Panel -->
+ <!-- Main Panel -->
+<div class="main-panel">
+    <div class="content-wrapper">
+        {% if not is_verified %}
+        <div class="alert alert-danger" role="alert">
+            Please verify your email in other to carry out transactions <a href="{% url 'accounts' %}" class="alert-link">CLick to verify</a>
+        </div>
+            {% endif %}
+      <!-- Page Header -->
+      <div class="page-header mb-4">
+        <h3 class="page-title">
+          <i class="fa fa-credit-card me-2"></i> Transactions
+        </h3>
+      </div>
+      <label class="switch-container mt-2">
+        <input type="checkbox" class="switch-input" id="toggleSwitch">
+        <span class="switch-slider"></span>
+    </label>
+    <span id="switch-label" class="ms-2"></span>
+      
+  
+      <!-- Balance Information Cards -->
+      <div class="row d-flex justify-content-start mt-4">
+        <!-- Dollar Balance Card -->
+        <div class="col-md-6 mb-4 mt-5">
+          <div class="card bg-dark py-3 shadow">
+            <div class="card-body">
+              <p class="text-light mb-2">
+                <i class="fa fa-credit-card me-2"></i> Main Balance
+              </p>
+              <h4 class="switch text-light">${{ formatted_Main_balance }}</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="container">
+        <!-- Buttons to toggle between Deposit and Withdrawal -->
+        <div class="text-center mb-4">
+            <button id="depositBtn" class="btn btn-outline-dark text-dark ">Deposit</button>
+            <button id="withdrawalBtn" class="btn btn-outline-dark text-dark ">Withdrawal</button>
+            <button id="tranferBtn" class="btn btn-outline-dark text-dark ">Tranfer</button>
+        </div>
+    
+        <!-- Deposit Section -->
+        <div id="depositSection" class="row">
+            <!-- Deposit Form -->
+            <div class="col-md-6">
+                <div class="card rounded p-4 shadow-sm">
+                    <div class="card-title text-info text-center">
+                        <h4 class="fw-bold">Deposit Form</h4>
+                    </div>
+                    <p>Fill in the form to deposit</p>
+                    <div class="card-body">
+                        <form id="depositForm" method="post" action="#">
+                            {% csrf_token %}
+                            <!-- Amount Field -->
+                            <div class="form-group mb-3">
+                                <label for="amount" class="form-label">Amount</label>
+                                <input type="number" step="0.01" min="0" class="form-control" id="amount" name="amount" required placeholder="Enter amount to deposit">
+                            </div>
+                            <!-- Description Field -->
+                            <div class="form-group mb-3">
+                                <label for="description" class="form-label">Description (optional)</label>
+                                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Add a description"></textarea>
+                            </div>
+                            <!-- Balance Type Field -->
+                            <div class="form-group mb-4">
+                                <label for="balance_type" class="form-label">Balance Type</label>
+                                <select class="form-control" id="balance_type" name="balance_type" required>
+                                    <option value="">Select balance type</option>
+                                    <option value="main_balance">Main balance</option>
+                                </select>
+                            </div>
+                            <!-- Confirm Deposit Button -->
+                            <button type="submit" class="btn btn-primary w-100">Confirm Deposit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Recent Deposit Transactions -->
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card bg-transparent">
+                    <div class="card-body">
+                        <h4 class="card-title d-flex align-items-center">
+                            <i class="fas fa-exchange-alt me-2" style="font-size: 1.5rem; color: #007bff;"></i>
+                            Recent Deposit Transactions
+                        </h4>
+                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% if recent_transactions %}
+                                    {% for transaction in recent_transactions %}
+                                        {% if transaction.category == 'Deposit' %}
+                                            <tr>
+                                                <td>{{ transaction.id }}</td>
+                                                <td>{{ transaction.description }}</td>
+                                                <td>{{ transaction.category }}</td>
+                                                <td>${{ transaction.amount }}</td>
+                                                <td>
+                                                    <span class="badge 
+                                                        {% if transaction.status == 'Completed' %} bg-success 
+                                                        {% elif transaction.status == 'Pending' %} bg-warning 
+                                                        {% else %} bg-danger {% endif %}">
+                                                        {{ transaction.get_status_display }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ transaction.date|date:"M d, Y h:i A" }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">No transactions available</td>
+                                    </tr>
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Withdrawal Section -->
+        <div id="withdrawalSection" class="row hidden">
+            <!-- Withdrawal Form -->
+            <div class="col-md-6">
+                <div class="card rounded p-4 shadow-sm">
+                    <div class="card-title text-info text-center">
+                        <h4 class="fw-bold">Withdrawal Form</h4>
+                    </div>
+                    <p>Fill in the form to withdraw</p>
+                    <div class="card-body">
+                        <form id="withdrawalForm" method="post" action="">
+                            {% csrf_token %}
+                            <!-- Amount Field -->
+                            <div class="form-group mb-3">
+                                <label for="withdraw_amount" class="form-label">Amount</label>
+                                <input type="number" step="0.01" min="0" class="form-control" id="withdraw_amount" name="withdraw_amount" required placeholder="Enter amount to withdraw">
+                            </div>
+                            <!-- Description Field -->
+                            <div class="form-group mb-3">
+                                <label for="withdraw_description" class="form-label">Description (optional)</label>
+                                <textarea class="form-control" id="withdraw_description" name="withdraw_description" rows="3" placeholder="Add a description"></textarea>
+                            </div>
+                            <!-- Withdrawal Address Field -->
+                            <div class="form-group mb-3">
+                                <label for="withdraw_address" class="form-label">Withdrawal address (TRC20)</label>
+                                <textarea class="form-control" id="withdraw_address" name="withdraw_address" rows="3" placeholder="Withdraw address for USDT (TRC20)"></textarea>
+                            </div>
+                            <!-- Confirm Withdrawal Button -->
+                            <button type="submit" class="btn btn-primary  w-100">RequestCode</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        
+
+
+            <!-- Recent Withdrawal Transactions -->
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card bg-transparent">
+                    <div class="card-body">
+                        <h4 class="card-title d-flex align-items-center">
+                            <i class="fas fa-exchange-alt me-2" style="font-size: 1.5rem; color: #007bff;"></i>
+                            Recent Withdrawal Transactions
+                        </h4>
+                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% if recent_transactions %}
+                                    {% for transaction in recent_transactions %}
+                                        {% if transaction.category == 'Withdrawal' %}
+                                            <tr>
+                                                <td>{{ transaction.id }}</td>
+                                                <td>{{ transaction.description }}</td>
+                                                <td>{{ transaction.category }}</td>
+                                                <td>${{ transaction.amount }}</td>
+                                                <td>
+                                                    <span class="badge 
+                                                        {% if transaction.status == 'Completed' %} bg-success 
+                                                        {% elif transaction.status == 'Pending' %} bg-warning 
+                                                        {% else %} bg-danger {% endif %}">
+                                                        {{ transaction.get_status_display }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ transaction.date|date:"M d, Y h:i A" }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">No transactions available</td>
+                                    </tr>
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+        <!-- Withdrawal Section -->
+        <div id="tranferSection" class="row hidden">
+          
+          
+            <div class="col-md-6">
+                <div class="card rounded p-4 shadow-sm">
+                    <div class="card-title text-info text-center">
+                        <h4 class="fw-bold">Transfer Form</h4>
+                    </div>
+                    <p>Fill in the form to transfer</p>
+                    <div class="card-body">
+                        <form id="TranferForm" method="post" action="#">
+                            {% csrf_token %}
+                            <!-- Amount Field -->
+                            <div class="form-group mb-3">
+                                <label for="Tranfer_amount" class="form-label">Amount</label>
+                                <input type="number" step="0.01" min="0" class="form-control" id="Tranfer_amount" name="Tranfer_amount" required placeholder="Enter amount to transfer">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="reciever_address" class="form-label">Receiver's address (USDT TRC20)</label>
+                                <textarea class="form-control" id="reciever_address" name="reciever_address" rows="3" placeholder="Receiver's address for USDT (TRC20)"></textarea>
+                            </div>
+                            <!-- Description Field -->
+                            <div class="form-group mb-3">
+                                <label for="tranfer_description" class="form-label">Description (optional)</label>
+                                <textarea class="form-control" id="tranfer_description" name="withdraw_description" rows="3" placeholder="Add a description"></textarea>
+                            </div>
+                            
+                            <!-- Confirm Transfer Button -->
+                            <button type="submit" class="btn btn-primary w-100">Transfer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent tranfer Transactions -->
+            <div class="col-md-6 grid-margin stretch-card">
+                <div class="card bg-transparent">
+                    <div class="card-body">
+                        <h4 class="card-title d-flex align-items-center">
+                            <i class="fas fa-exchange-alt me-2" style="font-size: 1.5rem; color: #007bff;"></i>
+                            Recent Tranfer Transactions
+                        </h4>
+                        <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+                            <table class="table table-striped table-hover">
+                                <thead class="table-light">
+                                <tr>
+                                    <th>Transaction ID</th>
+                                    <th>Description</th>
+                                    <th>Category</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% if recent_transactions %}
+                                    {% for transaction in recent_transactions %}
+                                        {% if transaction.category == 'Transfer' %}
+                                            <tr>
+                                                <td>{{ transaction.id }}</td>
+                                                <td>{{ transaction.description }}</td>
+                                                <td>{{ transaction.category }}</td>
+                                                <td>${{ transaction.amount }}</td>
+                                                <td>
+                                                    <span class="badge 
+                                                        {% if transaction.status == 'Completed' %} bg-success 
+                                                        {% elif transaction.status == 'Pending' %} bg-warning 
+                                                        {% else %} bg-danger {% endif %}">
+                                                        {{ transaction.get_status_display }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ transaction.date|date:"M d, Y h:i A" }}</td>
+                                            </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% else %}
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted">No transactions available</td>
+                                    </tr>
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            
+        </div>
+
+
+
+
+
+    </div>
+    
+    
+    
+    
+     
+
+      
+    </div>
+
+
+
+  </div>
+
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+document.getElementById('withdrawalForm').addEventListener('submit', function(event) {
+    event.preventDefault();  // Prevent the form from submitting normally
+    
+    let withdrawAmount = document.getElementById('withdraw_amount').value;
+    let withdrawDescription = document.getElementById('withdraw_description').value;
+    let withdrawAddress = document.getElementById('withdraw_address').value;
+
+    // Check if fields are valid
+    if (!withdrawAmount || withdrawAmount <= 0 || !withdrawAddress) {
+        Swal.fire('Error', 'Please provide a valid amount and withdrawal address.', 'error');
+        return;
+    }
+
+    // Send the withdrawal request (step 1 - request verification code)
+    fetch("{% url 'request_withdrawal_code' %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            amount: withdrawAmount,
+            description: withdrawDescription,
+            address: withdrawAddress
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Ask for the verification code using SweetAlert2
+            Swal.fire({
+                title: 'Enter Verification Code',
+                input: 'text',
+                inputLabel: 'A verification code has been sent to your email',
+                inputPlaceholder: 'Enter the code here',
+                inputAttributes: {
+                    'maxlength': '6',
+                    'autocapitalize': 'off',
+                    'autocorrect': 'off'
+                },
+                showCancelButton: true,
+                confirmButtonText: 'Verify',
+                showLoaderOnConfirm: true,
+                preConfirm: (code) => {
+                    // Verify the withdrawal code
+                    return fetch("{% url 'verify_withdrawal_code' %}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': '{{ csrf_token }}',
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            code: code,
+                            amount: withdrawAmount,
+                            description: withdrawDescription,
+                            address: withdrawAddress
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(response.statusText);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (!data.success) {
+                            throw new Error(data.message);
+                        }
+                        return data;
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(
+                            `Request failed: ${error}`
+                        );
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    Swal.fire('Success', 'Withdrawal successfully processed!', 'success');
+                }
+            });
+        } else {
+            Swal.fire('Error', data.message, 'error');
+        }
+    })
+    .catch(error => {
+        Swal.fire('Error', 'Something went wrong. Please try again later.', 'error');
+    });
+});
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const depositBtn = document.getElementById('depositBtn');
+        const withdrawalBtn = document.getElementById('withdrawalBtn');
+        const tranferBtn = document.getElementById('tranferBtn');
+        const depositSection = document.getElementById('depositSection');
+        const withdrawalSection = document.getElementById('withdrawalSection');
+        const tranferSection = document.getElementById('tranferSection');
+
+        // Load the last active section from localStorage
+        const lastActiveSection = localStorage.getItem('activeSection') || 'deposit';
+        setActiveSection(lastActiveSection);
+
+        function setActiveSection(section) {
+            // Reset all buttons to secondary
+            depositBtn.classList.add('btn-secondary');
+            withdrawalBtn.classList.add('btn-secondary');
+            tranferBtn.classList.add('btn-secondary');
+
+            // Hide all sections initially
+            depositSection.classList.add('hidden');
+            withdrawalSection.classList.add('hidden');
+            tranferSection.classList.add('hidden');
+
+            if (section === 'deposit') {
+                // Set Deposit button active
+                depositBtn.classList.add('btn-primary');
+
+                // Show Deposit section
+                depositSection.classList.remove('hidden');
+                depositSection.classList.add('slide-in');
+                depositSection.classList.add('visible');
+
+                // Hide other sections if visible
+                withdrawalSection.classList.add('slide-out');
+                withdrawalSection.addEventListener('animationend', () => {
+                    withdrawalSection.classList.remove('slide-out');
+                }, { once: true });
+
+            } else if (section === 'withdrawal') {
+                // Set Withdrawal button active
+                withdrawalBtn.classList.add('btn-primary');
+
+                // Show Withdrawal section
+                withdrawalSection.classList.remove('hidden');
+                withdrawalSection.classList.add('slide-in');
+                withdrawalSection.classList.add('visible');
+
+                // Hide other sections if visible
+                depositSection.classList.add('slide-out');
+                depositSection.addEventListener('animationend', () => {
+                    depositSection.classList.remove('slide-out');
+                }, { once: true });
+
+            } else if (section === 'tranfer') {
+                // Set Transfer button active
+                tranferBtn.classList.add('btn-primary');
+
+                // Show Transfer section
+                tranferSection.classList.remove('hidden');
+                tranferSection.classList.add('slide-in');
+                tranferSection.classList.add('visible');
+
+                // Hide other sections if visible
+                depositSection.classList.add('slide-out');
+                withdrawalSection.classList.add('slide-out');
+                depositSection.addEventListener('animationend', () => {
+                    depositSection.classList.remove('slide-out');
+                }, { once: true });
+                withdrawalSection.addEventListener('animationend', () => {
+                    withdrawalSection.classList.remove('slide-out');
+                }, { once: true });
+            }
+
+            // Save the active section to localStorage
+            localStorage.setItem('activeSection', section);
+        }
+
+        depositBtn.addEventListener('click', function () {
+            setActiveSection('deposit');
+        });
+
+        withdrawalBtn.addEventListener('click', function () {
+            setActiveSection('withdrawal');
+        });
+
+        tranferBtn.addEventListener('click', function () {
+            setActiveSection('tranfer');
+        });
+    });
+</script>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Listen for the form submission
+        document.getElementById('depositForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            
+            // Get the selected balance type and amount from the form
+            const balanceType = document.getElementById('balance_type').value; 
+            const amount = document.getElementById('amount').value; 
+
+            // Make an AJAX request to fetch the deposit address
+            fetch("{% url 'get_deposit_address' %}?balance_type=" + balanceType)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        let title, content;
+                        let timerDuration = 10; // Countdown duration in seconds
+
+                        // Use the dynamic wallet type and address returned from the server
+                        title = `${data.data.wallet_type} Deposit Address`;  // Wallet type (TRC20/ERC20)
+                        content = `
+                            <strong>Wallet Address:</strong> ${data.data.wallet_address}<br>
+                            <strong>Amount:</strong> $${amount}<br>
+                            <strong>Please wait while we process your request...</strong><br>
+                            <strong>Time remaining:</strong> <span id="timer">${timerDuration}</span> seconds
+                        `;
+
+                        // Display the SweetAlert pop-up
+                        Swal.fire({
+                            title: title,
+                            html: content,
+                            icon: 'info',
+                            showConfirmButton: false, // Hide the confirm button initially
+                        });
+
+                        // Start the countdown timer
+                        const timerInterval = setInterval(() => {
+                            timerDuration--;
+                            document.getElementById('timer').textContent = timerDuration;
+
+                            // If timer reaches 0, clear the interval and show the confirm button
+                            if (timerDuration <= 0) {
+                                clearInterval(timerInterval);
+                                Swal.fire({
+                                    title: title,
+                                    html: content,
+                                    icon: 'info',
+                                    showConfirmButton: true, // Show the confirm button
+                                    confirmButtonText: 'OK'
+                                }).then((result) => {
+                                    // If "OK" button is clicked, send the deposit details to the server
+                                    if (result.isConfirmed) {
+                                        processDeposit(balanceType, amount); // Call the function to process deposit
+                                    }
+                                });
+                            }
+                        }, 1000); // Update every second
+
+                    } else {
+                        // Handle case where fetching the address failed
+                        Swal.fire({
+                            title: 'Error',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    // General error handling for network issues or unexpected errors
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'An error occurred while fetching the deposit address.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        });
+
+        // Function to handle the deposit and transaction submission
+        function processDeposit(balanceType, amount) {
+            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value; // Get the CSRF token
+
+            // Make an AJAX POST request to process the deposit
+            fetch("{% url 'process_deposit' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken  // Include the CSRF token for security
+                },
+                body: JSON.stringify({
+                    balance_type: balanceType,
+                    amount: amount
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    Swal.fire({
+                        title: 'Deposit Successful',
+                        text: 'Your deposit request has been sent. Your account will be credited shortly.',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        location.reload(); // Reload the page to reflect the updated balance
+                    });
+                } else {
+                    // Show error message
+                    Swal.fire({
+                        title: 'Deposit Failed',
+                        text: data.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            })
+            .catch(error => {
+                // Show general error message
+                Swal.fire({
+                    title: 'Error',
+                    text: 'An error occurred while processing your deposit.',
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            });
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+</script>
+
+
+
+
+<script>
+    document.getElementById('TranferForm').addEventListener('submit', function(event) {
+        event.preventDefault();  // Prevent the form from submitting normally
+    
+        let transferAmount = document.getElementById('Tranfer_amount').value;
+        let transferDescription = document.getElementById('tranfer_description').value;
+        let receiverAddress = document.getElementById('reciever_address').value;
+    
+        // Check if fields are valid
+        if (!transferAmount || transferAmount <= 0 || !receiverAddress) {
+            Swal.fire('Error', 'Please provide a valid amount and receiver address.', 'error');
+            return;
+        }
+    
+        // Send the transfer request (step 1 - request verification code)
+        fetch("{% url 'request_transfer_code' %}", {  // Update the URL to your correct transfer code request URL
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount: transferAmount,
+                description: transferDescription,
+                address: receiverAddress
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Ask for the verification code using SweetAlert2
+                Swal.fire({
+                    title: 'Enter Verification Code',
+                    input: 'text',
+                    inputLabel: 'A verification code has been sent to your email',
+                    inputPlaceholder: 'Enter the code here',
+                    inputAttributes: {
+                        'maxlength': '6',
+                        'autocapitalize': 'off',
+                        'autocorrect': 'off'
+                    },
+                    showCancelButton: true,
+                    confirmButtonText: 'Verify',
+                    showLoaderOnConfirm: true,
+                    preConfirm: (code) => {
+                        // Verify the transfer code
+                        return fetch("{% url 'verify_transfer_code' %}", {  // Update the URL to your correct verification code URL
+                            method: 'POST',
+                            headers: {
+                                'X-CSRFToken': '{{ csrf_token }}',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                code: code,
+                                amount: transferAmount,
+                                description: transferDescription,
+                                address: receiverAddress
+                            })
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error(response.statusText);
+                            }
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (!data.success) {
+                                throw new Error(data.message);
+                            }
+                            return data;
+                        })
+                        .catch(error => {
+                            Swal.showValidationMessage(`Request failed: ${error.message}`);
+                        });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        Swal.fire('Success', 'Transfer successfully processed!', 'success');
+                    }
+                    location.reload(); 
+                });
+            } else {
+                Swal.fire('Error', data.message, 'error');
+            }
+        })
+        .catch(error => {
+            Swal.fire('Error', 'Something went wrong. Please try again later.', 'error');
+        });
+    });
+    </script>
+    
+
+
+
+{% endblock contents %}

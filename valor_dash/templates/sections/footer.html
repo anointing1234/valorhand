@@ -1,0 +1,126 @@
+
+{% load static %}
+ 
+
+
+
+<!-- content-wrapper ends -->
+        <!-- partial:partials/_footer.html -->
+        <footer class="footer ">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">
+              Copyright©valorhand.com 
+              <span id="year"></span> <!-- Add the element to display the year here -->
+              . All rights reserved.
+            </span>
+          </div>
+        </footer>
+        
+        <!-- JavaScript to set the year dynamically -->
+        <script>
+          document.getElementById('year').innerText = new Date().getFullYear();
+        </script>
+        
+          <!-- partial -->
+        </div>
+        <!-- main-panel ends -->
+      </div>
+      <!-- page-body-wrapper ends -->
+    </div>
+    <!-- container-scroller -->
+  
+    <!-- plugins:js -->
+    <script src="{% static 'vendors/js/vendor.bundle.base.js' %}"></script>
+    <script src="{% static 'vendors/js/vendor.bundle.addons.js' %}"></script>
+    <!-- endinject -->
+    <!-- Plugin js for this page-->
+    <!-- End plugin js for this page-->
+    <!-- inject:js -->
+    <script src="{% static 'js/off-canvas.js' %}"></script>
+    <script src="{% static 'js/hoverable-collapse.js' %}"></script>
+    <script src="{% static 'js/misc.js' %}"></script>
+    <script src="{% static 'js/settings.js' %}"></script>
+    <script src="{% static 'js/todolist.js' %}"></script>
+    <!-- endinject -->
+    <!-- Custom js for this page-->
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.1.3/js/bootstrap.min.js"></script>
+
+    <script>
+      // Get the toggle switch and elements to be hidden
+      const toggleSwitch = document.getElementById('toggleSwitch');
+      const switchElements = document.querySelectorAll('.switch');
+      const switchLabel = document.getElementById('switch-label');
+
+      // Function to toggle the visibility of elements
+      function toggleVisibility() {
+          const isHidden = localStorage.getItem('contentHidden') === 'true';
+
+          if (isHidden) {
+              switchElements.forEach(element => {
+                  element.textContent = '**********';
+                  element.classList.add('masked');
+              });
+              toggleSwitch.checked = true;
+          } else {
+              switchElements.forEach(element => {
+                  element.textContent = element.getAttribute('data-original-text');
+                  element.classList.remove('masked');
+              });
+              toggleSwitch.checked = false;
+          }
+      }
+
+      // Function to update local storage and toggle elements
+      function toggleContent() {
+          const isHidden = localStorage.getItem('contentHidden') === 'true';
+          localStorage.setItem('contentHidden', !isHidden);
+          toggleVisibility();
+      }
+
+      // Store the original text in a custom attribute and initialize visibility
+      switchElements.forEach(element => {
+          element.setAttribute('data-original-text', element.textContent);
+      });
+      toggleVisibility();
+
+      // Add event listener to toggle switch
+      toggleSwitch.addEventListener('change', toggleContent);
+  </script>
+  
+  <script>
+      // Open the right sidebar based on the savings type (daily, monthly, yearly)
+      function openSidebar(type) {
+          document.getElementById(`sidebar_right-${type}`).classList.add('active');
+      }
+
+      // Close the sidebar
+      function closeSidebar(type) {
+          document.getElementById(`sidebar_right-${type}`).classList.remove('active');
+      }
+  </script>
+
+  <script>
+    // Open the right sidebar based on the button clicked
+    function openSidebar(type) {
+        const sidebar = document.getElementById(`sidebar_${type}`);
+        if (!sidebar.classList.contains('active')) {
+            sidebar.classList.add('active');
+            sidebar.setAttribute('aria-hidden', 'false'); // Accessibility improvement
+        }
+    }
+
+    // Close the sidebar
+    function closeSidebar(type) {
+        const sidebar = document.getElementById(`sidebar_${type}`);
+        if (sidebar.classList.contains('active')) {
+            sidebar.classList.remove('active');
+            sidebar.setAttribute('aria-hidden', 'true'); // Accessibility improvement
+        }
+    }
+</script>
+
+
+
+    <!-- End custom js for this page-->

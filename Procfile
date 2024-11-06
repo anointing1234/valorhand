@@ -1,0 +1,1 @@
+web: gunicorn valorhand.wsgi --log-file -
