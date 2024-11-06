@@ -35,11 +35,8 @@ DEBUG = True
 
 # Security settings
 ALLOWED_HOSTS = ["web-production-23342.up.railway.app"]
-<<<<<<< HEAD
 # ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
-=======
 
->>>>>>> bffdd13b225558ea11fdba4ce16602f3d26f203c
 
 
 
@@ -63,10 +60,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-<<<<<<< HEAD
     'valorhand.error_middleware.ErrorHandlingMiddleware', 
-=======
->>>>>>> bffdd13b225558ea11fdba4ce16602f3d26f203c
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
